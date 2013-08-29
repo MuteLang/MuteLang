@@ -22,8 +22,9 @@ foreach ($operations as $key => $value) {
 	preg_match_all('#\{(.*?)\}#', $value, $oper);
 	$oper = $oper[1];
 
+
 	$program[$id]["name"] = $id;
-	$program[$id]["attr"] = $attr;
+	$program[$id]["attr"] = explode(",", $attr);
 	$program[$id]["cond"] = $cond;
 	$program[$id]["oper"] = $oper;
 
@@ -42,14 +43,15 @@ function interpreter($run){
 	// Parameters
 	// =======================
 
-	$run["attr"] = explode(",", $run["attr"]);
 
 	// =======================
 	// Conditions
 	// =======================
 
-	$run["variables"] = preg_split('/[^a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$run["operators"] = preg_split('/[a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+	if( resolve($run) ){
+		echo "Resolving<br />";
+	}
 
 	// =======================
 	// Operations
@@ -62,7 +64,52 @@ function interpreter($run){
 
 }
 
+function resolve($run){
 
+	$run["cond_variables"] = preg_split('/[^a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$run["cond_operators"] = preg_split('/[a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+	$first = floatval($run["cond_variables"][0]);
+	$second = floatval($run["cond_variables"][1]);
+	$operator = $run["cond_operators"][0];
+
+	echo associate($run["cond_variables"][0]);
+
+	switch($operator){
+		case ">":
+			$resolving = $first > $second;
+		break;
+		case "<":
+			$resolving = $first < $second;
+		break;
+	}
+
+	if( $resolving ){
+		return true;
+	}
+	else{
+		return false;
+	}
+
+}
+
+function associate($var){
+
+	global $program;
+	
+	if (strpos($var, '.') !== false){
+		$breakdown = explode(".", $var);
+		$varname = $breakdown[0];
+		$varkey = intval($breakdown[1]);
+
+		if( $program[$varname]["attr"][0] ){
+			return $program[$varname]["attr"][$varkey];
+		}
+	}
+
+	return $var;
+
+}
 
 
 ?>
