@@ -15,6 +15,22 @@ foreach ($operations as $key => $value) {
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
 
+	$program = update($value);
+	interpreter($id);
+
+}
+
+// =======================
+// Updater
+// =======================
+
+function update($value){
+
+	global $program;
+
+	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$id = $id[0];
+
 	preg_match('#\[(.*?)\]#', $value, $attr);
 	$attr = $attr[1];
 	preg_match('#\((.*?)\)#', $value, $cond);
@@ -22,14 +38,18 @@ foreach ($operations as $key => $value) {
 	preg_match('#\{(.*?)\}#', $value, $oper);
 	$oper = $oper[1];
 
-
 	$program[$id]["name"] = $id;
-	$program[$id]["attr"] = explode(",", $attr);
-	$program[$id]["cond"] = $cond;
-	$program[$id]["oper"] = $oper;
+	if( $attr ){
+		$program[$id]["attr"] = explode(",", $attr);
+	}
+	if( $cond ){
+		$program[$id]["cond"] = $cond;
+	}
+	if( $oper ){
+		$program[$id]["oper"] = $oper;
+	}
 
-	interpreter($program[$id]);
-	$line++;
+	return $program;
 
 }
 
@@ -37,29 +57,19 @@ foreach ($operations as $key => $value) {
 // Interpreter
 // =======================
 
-function interpreter($run){
+function interpreter($id){
 
-	// =======================
-	// Parameters
-	// =======================
+	global $program;
 
-
-	// =======================
-	// Conditions
-	// =======================
-
-	if( resolve($run) ){
-		operate($run['oper']);
+	if( resolve($program[$id]) && $program[$id]["oper"] ){
+		echo "$id: Operating<br />==================<br />";
+		operate($program[$id]['oper']);
+	}
+	else{
+		echo "$id: Skipped<br />==================<br />";
 	}
 
-	// =======================
-	// Operations
-	// =======================
-
-	echo "<h2>Program ".$run['name']."</h2>";
-	echo "<pre>";
-	print_r($run);
-	echo "</pre>";
+	
 
 }
 
@@ -77,6 +87,8 @@ function resolve($run){
 		case "<": $resolving = $first < $second; break;
 		case "=": $resolving = $first ==$second; break;
 	}
+
+	echo "Resolve: $first $operator $second<br />";
 
 	if( $resolving ){
 		return true;
@@ -108,14 +120,27 @@ function associate($var){
 
 function operate($operation){
 
+	global $program;
+
+	$id = preg_split('/[^a-z0-9]/i', $operation, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$id = $id[0];
+
 	
 
+	if(substr($operation, 0,1) == "\""){
+		echo "RENDER<br/>";
+	}
+	else{
+		$program = update($operation);
+		interpreter($id);
+	}
 
-	print_r($operation);
 }
 
 
-
+// print "<pre>";
+// print_r($program);
+// print "</pre>";
 
 
 
