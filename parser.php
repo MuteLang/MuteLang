@@ -19,7 +19,7 @@ foreach ($operations as $key => $value) {
 	$attr = $attr[1];
 	preg_match('#\((.*?)\)#', $value, $cond);
 	$cond = $cond[1];
-	preg_match_all('#\{(.*?)\}#', $value, $oper);
+	preg_match('#\{(.*?)\}#', $value, $oper);
 	$oper = $oper[1];
 
 
@@ -48,9 +48,8 @@ function interpreter($run){
 	// Conditions
 	// =======================
 
-
 	if( resolve($run) ){
-		echo "Resolving<br />";
+		operate($run['oper']);
 	}
 
 	// =======================
@@ -69,19 +68,14 @@ function resolve($run){
 	$run["cond_variables"] = preg_split('/[^a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$run["cond_operators"] = preg_split('/[a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-	$first = floatval($run["cond_variables"][0]);
-	$second = floatval($run["cond_variables"][1]);
+	$first = floatval(associate($run["cond_variables"][0]));
+	$second = floatval(associate($run["cond_variables"][1]));
 	$operator = $run["cond_operators"][0];
 
-	echo associate($run["cond_variables"][0]);
-
 	switch($operator){
-		case ">":
-			$resolving = $first > $second;
-		break;
-		case "<":
-			$resolving = $first < $second;
-		break;
+		case ">": $resolving = $first > $second; break;
+		case "<": $resolving = $first < $second; break;
+		case "=": $resolving = $first ==$second; break;
 	}
 
 	if( $resolving ){
@@ -96,7 +90,7 @@ function resolve($run){
 function associate($var){
 
 	global $program;
-	
+
 	if (strpos($var, '.') !== false){
 		$breakdown = explode(".", $var);
 		$varname = $breakdown[0];
@@ -110,6 +104,20 @@ function associate($var){
 	return $var;
 
 }
+
+
+function operate($operation){
+
+	
+
+
+	print_r($operation);
+}
+
+
+
+
+
 
 
 ?>
