@@ -4,9 +4,11 @@
 
 $original = file_get_contents("mutescript.mu.php");
 if (preg_match('/"([^"]+)"/', $original, $m)) {
+	echo "[".$string_uncompressed."]<br />";
     $string_uncompressed = $m[1]; 
     $string_compressed = str_replace(" ", "", $string_uncompressed);
 }
+
 $original = str_replace(" ", "", $original);
 // Decompress strings between quotes
 $original = str_replace($string_compressed, $string_uncompressed, $original);
