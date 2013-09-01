@@ -1,2 +1,2 @@
-b(b.0 > 1){"hey"}
-a[4,2](a.0 > a.1){b[3]} 
+dict[first,second]
+test[working]{"hello_@1_@2",$.0,dict}

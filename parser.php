@@ -4,8 +4,6 @@ $original = file_get_contents("mutescript.php");
 $original = str_replace(" ", "", $original);
 $operations = explode("\n", $original);
 
-$line = 0;
-
 // =======================
 // Parser
 // =======================
@@ -62,14 +60,8 @@ function interpreter($id){
 	global $program;
 
 	if( resolve($program[$id]) && $program[$id]["oper"] ){
-		echo "$id: Operating<br />==================<br />";
 		operate($program[$id]['oper']);
 	}
-	else{
-		echo "$id: Skipped<br />==================<br />";
-	}
-
-	
 
 }
 
@@ -88,9 +80,7 @@ function resolve($run){
 		case "=": $resolving = $first ==$second; break;
 	}
 
-	echo "Resolve: $first $operator $second<br />";
-
-	if( $resolving ){
+	if( $resolving || !$run["cond"] ){
 		return true;
 	}
 	else{
@@ -102,15 +92,21 @@ function resolve($run){
 function associate($var){
 
 	global $program;
+	global $id;
 
-	if (strpos($var, '.') !== false){
-		$breakdown = explode(".", $var);
-		$varname = $breakdown[0];
-		$varkey = intval($breakdown[1]);
+	$breakdown = explode(".", $var);
 
-		if( $program[$varname]["attr"][0] ){
-			return $program[$varname]["attr"][$varkey];
-		}
+	// If $ use self
+	$varname = $breakdown[0];
+	if($varname == "$"){
+		$varname = $id;
+	}
+
+	// If key is null, use 0
+	$varkey = intval($breakdown[1]); 
+
+	if( $program[$varname]["attr"][0] ){
+		return $program[$varname]["attr"][$varkey];
 	}
 
 	return $var;
@@ -125,10 +121,8 @@ function operate($operation){
 	$id = preg_split('/[^a-z0-9]/i', $operation, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
 
-	
-
 	if(substr($operation, 0,1) == "\""){
-		echo "RENDER<br/>";
+		echo renderString($operation);
 	}
 	else{
 		$program = update($operation);
@@ -138,9 +132,37 @@ function operate($operation){
 }
 
 
-// print "<pre>";
-// print_r($program);
-// print "</pre>";
+
+function renderString($operation){
+
+	preg_match('/"([^"]+)"/', $operation, $string);
+	$string = $string[1];
+
+	$replacements = str_replace("\"".$string."\",", "", $operation);
+	$replacements = explode(",", $replacements);
+
+	foreach ($replacements as $key => $value) {
+		$replacements[$key] = associate($value);
+	}
+
+
+	$result = str_replace(
+	    array("@1","@2","@3"),
+	    $replacements,
+	    $operation
+	);
+
+	echo "[".$result."]<br />";
+
+	return "operation : $operation ($string)<br />";
+
+}
+
+
+
+print "<pre>";
+print_r($program);
+print "</pre>";
 
 
 
