@@ -1,6 +1,17 @@
 <?
 
+// Todo
+
 $original = file_get_contents("mutescript.php");
+if (preg_match('/"([^"]+)"/', $original, $m)) {
+    $string_uncompressed = $m[1]; 
+    $string_compressed = str_replace(" ", "", $string_uncompressed);
+}
+$original = str_replace(" ", "", $original);
+// Decompress strings between quotes
+$original = str_replace($string_compressed, $string_uncompressed, $original);
+$operations = explode("\n", $original);
+
 print "<h2>Code</h2>";
 print "<pre>";
 print_r($original);
@@ -8,15 +19,9 @@ print "</pre>";
 
 print "<h2>Console</h2>";
 
-
-$original = str_replace(" ", "", $original);
-$operations = explode("\n", $original);
-
-
 // =======================
 // Parser
 // =======================
-
 
 foreach ($operations as $key => $value) {
 
@@ -27,7 +32,6 @@ foreach ($operations as $key => $value) {
 	interpreter($id);
 
 }
-
 
 // =======================
 // Updater

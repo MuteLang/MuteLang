@@ -1,2 +1,2 @@
 dict[first:bar]
-test[foo]{"hello_@1_@2",$,dict.first}
+test[foo]{"hello @1 @2",$,dict.first}
