@@ -2,7 +2,7 @@
 
 // Todo
 
-$original = file_get_contents("mutescript.php");
+$original = file_get_contents("mutescript.mu.php");
 if (preg_match('/"([^"]+)"/', $original, $m)) {
     $string_uncompressed = $m[1]; 
     $string_compressed = str_replace(" ", "", $string_uncompressed);
@@ -25,6 +25,8 @@ print "<h2>Console</h2>";
 
 foreach ($operations as $key => $value) {
 
+	global $id;
+
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
 
@@ -41,6 +43,7 @@ foreach ($operations as $key => $value) {
 function update($value){
 
 	global $program;
+	global $id;
 
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
@@ -107,8 +110,8 @@ function interpreter($id){
 
 function resolve($run){
 
-	$run["cond_variables"] = preg_split('/[^a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$run["cond_operators"] = preg_split('/[a-z0-9.]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$run["cond_variables"] = preg_split('/[^a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$run["cond_operators"] = preg_split('/[a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 	$first = floatval(associate($run["cond_variables"][0]));
 	$second = floatval(associate($run["cond_variables"][1]));
@@ -139,9 +142,7 @@ function associate($var){
 
 	// If $ use self
 	$varname = $breakdown[0];
-	if($varname == "$"){
-		$varname = $id;
-	}
+	$varname = str_replace("$", $id, $breakdown[0]);
 
 	// If key is null, use 0
 	if( strlen($breakdown[1]) > 0 && intval($breakdown[1]) < 1){
@@ -150,9 +151,9 @@ function associate($var){
 	else{
 		$varkey = intval($breakdown[1]); 
 	}
-	
 
 	if( $program[$varname]["attr"][0] ){
+		
 		return $program[$varname]["attr"][$varkey];
 	}
 
@@ -164,6 +165,7 @@ function associate($var){
 function operate($operation){
 
 	global $program;
+	global $id;
 
 	$id = preg_split('/[^a-z0-9]/i', $operation, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
