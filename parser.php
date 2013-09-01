@@ -3,7 +3,7 @@
 // Todo
 
 $original = file_get_contents("mutescript.mu.php");
-if (preg_match('/"([^"]+)"/', $original, $m)) {
+if (preg_match_all('/"([^"]+)"/', $original, $m)) {
 	echo "[".$string_uncompressed."]<br />";
     $string_uncompressed = $m[1]; 
     $string_compressed = str_replace(" ", "", $string_uncompressed);
