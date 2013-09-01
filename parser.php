@@ -4,7 +4,6 @@
 
 $original = file_get_contents("mutescript.mu.php");
 if (preg_match_all('/"([^"]+)"/', $original, $m)) {
-	echo "[".$string_uncompressed."]<br />";
     $string_uncompressed = $m[1]; 
     $string_compressed = str_replace(" ", "", $string_uncompressed);
 }
@@ -13,13 +12,6 @@ $original = str_replace(" ", "", $original);
 // Decompress strings between quotes
 $original = str_replace($string_compressed, $string_uncompressed, $original);
 $operations = explode("\n", $original);
-
-print "<h2>Code</h2>";
-print "<pre>";
-print_r($original);
-print "</pre>";
-
-print "<h2>Console</h2>";
 
 // =======================
 // Parser
@@ -115,14 +107,19 @@ function resolve($run){
 	$run["cond_variables"] = preg_split('/[^a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$run["cond_operators"] = preg_split('/[a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-	$first = floatval(associate($run["cond_variables"][0]));
-	$second = floatval(associate($run["cond_variables"][1]));
+	$first = associate($run["cond_variables"][0]);
+	$second = associate($run["cond_variables"][1]);
 	$operator = $run["cond_operators"][0];
 
 	switch($operator){
 		case ">": $resolving = $first > $second; break;
 		case "<": $resolving = $first < $second; break;
 		case "=": $resolving = $first ==$second; break;
+	}
+
+	// If only 1 variable as condition
+	if( count($run["cond_variables"]) < 2 && $first > 0 ){
+		$resolving = 1;
 	}
 
 	if( $resolving || !$run["cond"] ){
@@ -155,7 +152,6 @@ function associate($var){
 	}
 
 	if( $program[$varname]["attr"][0] ){
-		
 		return $program[$varname]["attr"][$varkey];
 	}
 
@@ -169,13 +165,12 @@ function operate($operation){
 	global $program;
 	global $id;
 
-	$id = preg_split('/[^a-z0-9]/i', $operation, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$id = $id[0];
-
 	if(substr($operation, 0,1) == "\""){
 		echo renderString($operation);
 	}
 	else{
+		$id = preg_split('/[^a-z0-9]/i', $operation, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$id = $id[0];
 		$program = update($operation);
 		interpreter($id);
 	}
@@ -205,9 +200,9 @@ function renderString($operation){
 
 }
 
-print "<h2>Memory</h2>";
-print "<pre>";
-print_r($program);
-print "</pre>";
+// print "<h2>Memory</h2>";
+// print "<pre>";
+// print_r($program);
+// print "</pre>";
 
 ?>

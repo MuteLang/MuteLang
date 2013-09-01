@@ -1,2 +1,2 @@
-{"blog test"}
-{"hello test"}
+a($){"value: @1 @2 @3",a.0, $.0, $}
+a[10]
