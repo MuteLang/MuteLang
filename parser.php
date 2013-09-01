@@ -1,12 +1,22 @@
 <?
 
 $original = file_get_contents("mutescript.php");
+print "<h2>Code</h2>";
+print "<pre>";
+print_r($original);
+print "</pre>";
+
+print "<h2>Console</h2>";
+
+
 $original = str_replace(" ", "", $original);
 $operations = explode("\n", $original);
+
 
 // =======================
 // Parser
 // =======================
+
 
 foreach ($operations as $key => $value) {
 
@@ -18,9 +28,11 @@ foreach ($operations as $key => $value) {
 
 }
 
+
 // =======================
 // Updater
 // =======================
+
 
 function update($value){
 
@@ -38,7 +50,7 @@ function update($value){
 
 	$program[$id]["name"] = $id;
 	if( $attr ){
-		$program[$id]["attr"] = explode(",", $attr);
+		$program[$id]["attr"] = update_attr($attr);
 	}
 	if( $cond ){
 		$program[$id]["cond"] = $cond;
@@ -51,9 +63,32 @@ function update($value){
 
 }
 
+
+
+function update_attr($attr){
+
+	$temp = explode(",", $attr);
+
+	foreach ($temp as $key => $value) {
+
+		$temp2 = explode(":", $value);
+		if( count($temp2) > 1 ){
+			$temp[$temp2[0]] = $temp2[1];
+		}
+
+		$temp[$key] = $value;
+	}
+
+	return $temp;
+
+}
+
+
+
 // =======================
 // Interpreter
 // =======================
+
 
 function interpreter($id){
 
@@ -64,6 +99,7 @@ function interpreter($id){
 	}
 
 }
+
 
 function resolve($run){
 
@@ -89,6 +125,7 @@ function resolve($run){
 
 }
 
+
 function associate($var){
 
 	global $program;
@@ -103,7 +140,13 @@ function associate($var){
 	}
 
 	// If key is null, use 0
-	$varkey = intval($breakdown[1]); 
+	if( strlen($breakdown[1]) > 0 && intval($breakdown[1]) < 1){
+		$varkey = $breakdown[1];
+	}
+	else{
+		$varkey = intval($breakdown[1]); 
+	}
+	
 
 	if( $program[$varname]["attr"][0] ){
 		return $program[$varname]["attr"][$varkey];
@@ -132,7 +175,6 @@ function operate($operation){
 }
 
 
-
 function renderString($operation){
 
 	preg_match('/"([^"]+)"/', $operation, $string);
@@ -145,26 +187,19 @@ function renderString($operation){
 		$replacements[$key] = associate($value);
 	}
 
-
 	$result = str_replace(
 	    array("@1","@2","@3"),
 	    $replacements,
-	    $operation
+	    $string
 	);
 
-	echo "[".$result."]<br />";
-
-	return "operation : $operation ($string)<br />";
+	return "$result";
 
 }
 
-
-
+print "<h2>Memory</h2>";
 print "<pre>";
 print_r($program);
 print "</pre>";
-
-
-
 
 ?>
