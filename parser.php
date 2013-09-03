@@ -169,8 +169,6 @@ function operate($operation){
 		echo renderString($operation);
 	}
 	else{
-		$id = preg_split('/[^a-z0-9]/i', $operation, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-		$id = $id[0];
 		$program = update($operation);
 		interpreter($id);
 	}
@@ -200,9 +198,8 @@ function renderString($operation){
 
 }
 
-// print "<h2>Memory</h2>";
-// print "<pre>";
-// print_r($program);
-// print "</pre>";
+print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px'>";
+print_r($program);
+print "</pre>";
 
 ?>
