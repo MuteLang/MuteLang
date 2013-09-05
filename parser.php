@@ -76,7 +76,7 @@ function update_attr($attr){
 
 	foreach ($temp as $key => $value) {
 		console("Attr : $key");
-		$temp[$key] = associate($value);
+		$temp[$key] = renderValue($value);
 	}
 
 	return $temp;
@@ -106,8 +106,8 @@ function resolve($run){
 	$run["cond_variables"] = preg_split('/[^a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$run["cond_operators"] = preg_split('/[a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-	$first = associate($run["cond_variables"][0]);
-	$second = associate($run["cond_variables"][1]);
+	$first = renderValue($run["cond_variables"][0]);
+	$second = renderValue($run["cond_variables"][1]);
 	$operator = $run["cond_operators"][0];
 
 	switch($operator){
@@ -131,7 +131,7 @@ function resolve($run){
 }
 
 
-function associate($var){
+function renderValue($var){
 
 	global $program;
 	global $id;
@@ -140,35 +140,31 @@ function associate($var){
 		return;
 	}
 
-	$attrMods = preg_split('/[a-z0-9$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$attrMods = preg_split('/[a-z0-9.$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$modifier = $attrMods[0];
-	$attrContent = preg_split('/[^a-z0-9$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$key = $attrContent[0];
-	$index = $attrContent[1];
+	$attrContent = preg_split('/[^a-z0-9.$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$key = dotValue($attrContent[0]);
+	$index = dotValue($attrContent[1]);
 
-
-	// Get
-	if (strpos($var, '.') !== FALSE){
-		console("Get  : $index");
-		if(!$index){ $index = 0; }
-		if( $program[$key]["attr"][$index] ){
-			return $program[$key]["attr"][$index];
-		}
-	}
 	// Random
 	if (strpos($var, '~') !== FALSE){
 		console("Rand : $key $index");
 		return rand($key,$index);
 	}
+	// Length
+	if (strpos($var, ';') !== FALSE){
+		console("Length : ".strlen($program[$key]["attr"][0]));
+		return strlen($key);
+	}
 	// Merge
-	if (strpos($var, '%') !== FALSE){
+	if (strpos($var, '&') !== FALSE){
 		console("Merge: $key $index");
-		return $program[$key]["attr"][0].$program[$index]["attr"][0];
+		return $key.$index;
 	}
 	// Combine
 	if (strpos($var, '+') !== FALSE){
 		console("Add  : $key $index");
-		return $program[$key]["attr"][0] + $program[$index]["attr"][0];
+		return $key + $index;
 	}
 	// Index (TODO)
 	if (strpos($var, ':') !== FALSE){
@@ -180,10 +176,33 @@ function associate($var){
 		console("Get  : $key $index");
 		return $program[$key]["attr"][$index];
 	}
+	// Index (TODO)
+	if (strpos($var, '.') !== FALSE){
+		return $key;
+	}
 	console("Default");
 
 	// Return
 	return $var;
+
+}
+
+
+function dotValue($dotvalue){
+
+	global $program;
+	// Get
+	if (strpos($dotvalue, '.') !== FALSE){
+
+		$elements = explode(".", $dotvalue);
+		$key = $elements[0];
+		$index = $elements[1];
+
+		console("Get  : ".$key." ".$index);
+		if( $program[$key]["attr"][$index] ){
+			return $program[$key]["attr"][$index];
+		}
+	}
 
 }
 
@@ -213,7 +232,7 @@ function renderString($operation){
 	$replacements = explode(",", $replacements);
 
 	foreach ($replacements as $key => $value) {
-		$replacements[$key] = associate($value);
+		$replacements[$key] = renderValue($value);
 	}
 
 	$result = str_replace(
