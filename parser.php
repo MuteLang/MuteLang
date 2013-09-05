@@ -71,13 +71,7 @@ function update_attr($attr){
 	$temp = explode(",", $attr);
 
 	foreach ($temp as $key => $value) {
-
-		$temp2 = explode(":", $value);
-		if( count($temp2) > 1 ){
-			$temp[$temp2[0]] = $temp2[1];
-		}
-
-		$temp[$key] = $value;
+		$temp[$key] = associate($value);
 	}
 
 	return $temp;
@@ -137,24 +131,51 @@ function associate($var){
 	global $program;
 	global $id;
 
-	$breakdown = explode(".", $var);
-
-	// If $ use self
-	$varname = $breakdown[0];
-	$varname = str_replace("$", $id, $breakdown[0]);
-
-	// If key is null, use 0
-	if( strlen($breakdown[1]) > 0 && intval($breakdown[1]) < 1){
-		$varkey = $breakdown[1];
-	}
-	else{
-		$varkey = intval($breakdown[1]); 
+	if(!$var){
+		return;
 	}
 
-	if( $program[$varname]["attr"][0] ){
-		return $program[$varname]["attr"][$varkey];
+	$attrMods = preg_split('/[a-z0-9$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$modifier = $attrMods[0];
+	$attrContent = preg_split('/[^a-z0-9$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$key = $attrContent[0];
+	$index = $attrContent[1];
+
+
+	// Get
+	if (strpos($var, '.') !== FALSE){
+		echo "Getter ($var)(".$modifier.")<br />";
+		if(!$index){ $index = 0; }
+		if( $program[$key]["attr"][$index] ){
+			return $program[$key]["attr"][$index];
+		}
+	}
+	// Random
+	if (strpos($var, '~') !== FALSE){
+		echo "Random ($var)(".$modifier.")<br />";
+		return rand($key,$index);
+	}
+	// Combine
+	if (strpos($var, '%') !== FALSE){
+		echo "Combine ($var)(".$modifier.")<br />";
+		return $program[$key]["attr"][0].$program[$index]["attr"][0];
+	}
+	// Combine
+	if (strpos($var, '+') !== FALSE){
+		echo "Add ($var)(".$modifier.")<br />";
+		return $program[$key]["attr"][0] + $program[$index]["attr"][0];
+	}
+	// Index (TODO)
+	if (strpos($var, ':') !== FALSE){
+		echo "Index ($id)(".$modifier.")<br />";
+		$program[$id]["attr"][$key] = $index;
+	}
+	// Default
+	if( $program[$key]["attr"][$index] && count($attrMods) < 1){
+		return $program[$key]["attr"][$index];
 	}
 
+	// Return
 	return $var;
 
 }
