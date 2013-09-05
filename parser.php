@@ -191,7 +191,7 @@ function renderValue($var){
 function dotValue($dotvalue){
 
 	global $program;
-	// Get
+
 	if (strpos($dotvalue, '.') !== FALSE){
 
 		$elements = explode(".", $dotvalue);
@@ -203,6 +203,10 @@ function dotValue($dotvalue){
 			return $program[$key]["attr"][$index];
 		}
 	}
+	else if( $program[$dotvalue]["attr"][0] ){
+		return $program[$dotvalue]["attr"][0];
+	}
+	return $dotvalue;
 
 }
 
