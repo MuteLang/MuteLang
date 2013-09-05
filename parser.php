@@ -1,12 +1,15 @@
 <?
 
 // Todo
-
-$original = file_get_contents("mutescript.mu.php");
+$filename = "mutescript.mu.php";
+$original = file_get_contents($filename);
 if (preg_match_all('/"([^"]+)"/', $original, $m)) {
     $string_uncompressed = $m[1]; 
     $string_compressed = str_replace(" ", "", $string_uncompressed);
 }
+$logs = array();
+
+console("Start: $filename");
 
 $original = str_replace(" ", "", $original);
 // Decompress strings between quotes
@@ -20,6 +23,7 @@ $operations = explode("\n", $original);
 foreach ($operations as $key => $value) {
 
 	global $id;
+	console("Line $key");
 
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
@@ -71,6 +75,7 @@ function update_attr($attr){
 	$temp = explode(",", $attr);
 
 	foreach ($temp as $key => $value) {
+		console("Attr : $key");
 		$temp[$key] = associate($value);
 	}
 
@@ -144,7 +149,7 @@ function associate($var){
 
 	// Get
 	if (strpos($var, '.') !== FALSE){
-		echo "Getter ($var)(".$modifier.")<br />";
+		console("Get  : $index");
 		if(!$index){ $index = 0; }
 		if( $program[$key]["attr"][$index] ){
 			return $program[$key]["attr"][$index];
@@ -152,28 +157,30 @@ function associate($var){
 	}
 	// Random
 	if (strpos($var, '~') !== FALSE){
-		echo "Random ($var)(".$modifier.")<br />";
+		console("Rand : $key $index");
 		return rand($key,$index);
 	}
-	// Combine
+	// Merge
 	if (strpos($var, '%') !== FALSE){
-		echo "Combine ($var)(".$modifier.")<br />";
+		console("Merge: $key $index");
 		return $program[$key]["attr"][0].$program[$index]["attr"][0];
 	}
 	// Combine
 	if (strpos($var, '+') !== FALSE){
-		echo "Add ($var)(".$modifier.")<br />";
+		console("Add  : $key $index");
 		return $program[$key]["attr"][0] + $program[$index]["attr"][0];
 	}
 	// Index (TODO)
 	if (strpos($var, ':') !== FALSE){
-		echo "Index ($id)(".$modifier.")<br />";
+		console("Index(error)");
 		$program[$id]["attr"][$key] = $index;
 	}
 	// Default
 	if( $program[$key]["attr"][$index] && count($attrMods) < 1){
+		console("Get  : $key $index");
 		return $program[$key]["attr"][$index];
 	}
+	console("Default");
 
 	// Return
 	return $var;
@@ -218,6 +225,18 @@ function renderString($operation){
 	return "$result";
 
 }
+
+
+function console($message){
+
+	global $logs;
+	$logs[count($logs)] = $message;
+
+}
+
+print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px; margin-bottom:20px'>";
+print_r($logs);
+print "</pre>";
 
 print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px'>";
 print_r($program);
