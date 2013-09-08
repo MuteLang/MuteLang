@@ -12,7 +12,6 @@ $logs = array();
 console("Start: $filename");
 
 $original = str_replace(" ", "", $original);
-// Decompress strings between quotes
 $original = str_replace($string_compressed, $string_uncompressed, $original);
 $operations = explode("\n", $original);
 
@@ -23,7 +22,7 @@ $operations = explode("\n", $original);
 foreach ($operations as $key => $value) {
 
 	global $id;
-	console("Line $key");
+	console("Line # $key");
 
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
@@ -43,9 +42,15 @@ function update($value){
 	global $program;
 	global $id;
 
-	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$id = $id[0];
+	$id = "----";
 
+	if (preg_match("/^[a-zA-Z0-9\\<\\>]$/", substr($value, 0,1) )) {
+	    $id = preg_split('/[^a-z0-9\\<\\>]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$id = $id[0];
+	}
+
+	preg_match('#\<(.*?)\>#', $value, $extn);
+	$extn = $extn[1];
 	preg_match('#\[(.*?)\]#', $value, $attr);
 	$attr = $attr[1];
 	preg_match('#\((.*?)\)#', $value, $cond);
@@ -54,6 +59,9 @@ function update($value){
 	$oper = $oper[1];
 
 	$program[$id]["name"] = $id;
+	if( $extn ){
+
+	}
 	if( $attr ){
 		$program[$id]["attr"] = update_attr($attr);
 	}
@@ -75,11 +83,21 @@ function update_attr($attr){
 	$temp = explode(",", $attr);
 
 	foreach ($temp as $key => $value) {
-		console("Attr : $key");
-		$temp[$key] = renderValue($value);
+		// Hard Setter
+		if (strpos($value, ':') !== FALSE){
+			$indexAndKey = explode(":", $value);
+			console("Set  : ".$indexAndKey[0]." ".$indexAndKey[1]);
+			$updated[$indexAndKey[0]] = $indexAndKey[1];
+		}
+		// Render
+		else{
+			console("Attr : $key");
+			$updated[$key] = renderValue($value);
+		}
+		
 	}
 
-	return $temp;
+	return $updated;
 
 }
 
@@ -166,11 +184,6 @@ function renderValue($var){
 		console("Add  : $key $index");
 		return $key + $index;
 	}
-	// Index (TODO)
-	if (strpos($var, ':') !== FALSE){
-		console("Index(error)");
-		$program[$id]["attr"][$key] = $index;
-	}
 	// Default
 	if( $program[$key]["attr"][$index] && count($attrMods) < 1){
 		console("Get  : $key $index");
@@ -253,16 +266,22 @@ function renderString($operation){
 function console($message){
 
 	global $logs;
+
 	$logs[count($logs)] = $message;
 
 }
 
-print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px; margin-bottom:20px'>";
-print_r($logs);
-print "</pre>";
+if($program["<system>"]["attr"]["logs"] == "on"){
+	print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px; margin-bottom:20px'>";
+	print_r($logs);
+	print "</pre>";
+}
 
-print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px'>";
-print_r($program);
-print "</pre>";
+if($program["<system>"]["attr"]["memory"] == "on"){
+	print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px'>";
+	$test = print_r($program,true);
+	echo htmlentities($test);
+	print "</pre>";
+}
 
 ?>
