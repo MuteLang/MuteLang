@@ -54,8 +54,10 @@ collection1(flyer.pages > 15)(5>1){"Solved<br />"}
 # multiple operations
 collection2{"First Collection<br />"}{"Second Collection<br />"}
 
-# if 
+# if (same as conditional variables)
+if[5]($>2){"true<br />"}
 
 # while
+a[1]($<10){"@ is smaller<br />",$}{a[$+1]}
 
 # foreach
