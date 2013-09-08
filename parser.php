@@ -64,7 +64,7 @@ function update($value){
 	$attr = $attr[1];
 	preg_match('#\((.*?)\)#', $value, $cond);
 	$cond = $cond[1];
-	preg_match('#\{(.*?)\}#', $value, $oper);
+	preg_match_all('#\{(.*?)\}#', $value, $oper);
 	$oper = $oper[1];
 
 	$program[$id]["name"] = $id;
@@ -122,7 +122,9 @@ function interpreter($id){
 	global $program;
 
 	if( resolve($program[$id]) && $program[$id]["oper"] ){
-		operate($program[$id]['oper']);
+		foreach ($program[$id]["oper"] as $key => $operationId) {
+			operate($operationId);
+		}
 	}
 
 }

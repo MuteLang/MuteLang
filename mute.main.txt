@@ -48,6 +48,8 @@ second[bar]
 topic[foo&bar]{"Topic: @",$}
 {"<br />"}
 
+# multiple operations
+collection{"First Collection<br />"}{"Second Collection<br />"}
 
 
 
