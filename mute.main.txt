@@ -35,3 +35,20 @@ leaflet[pages:4]{"Leaflet pages: @",$.pages}
 # random values
 dictionary[pages:5~10]{"Dictionary pages: @",$.pages}
 {"<br />"}
+
+# inline operation
+panflet1[5*5]
+panflet2[10-5]
+{"Values: @, @",panflet1,panflet2}
+{"<br />"}
+
+# combine strings
+first[foo]
+second[bar]
+topic[foo&bar]{"Topic: @",$}
+{"<br />"}
+
+
+
+
+

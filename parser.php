@@ -193,10 +193,30 @@ function renderValue($var){
 		console("Merge: $key $index");
 		return $key.$index;
 	}
-	// Combine
+	// Add
 	if (strpos($var, '+') !== FALSE){
 		console("Add  : $key $index");
 		return $key + $index;
+	}
+	// Subtract
+	if (strpos($var, '-') !== FALSE){
+		console("Add  : $key $index");
+		return $key - $index;
+	}
+	// Multiply
+	if (strpos($var, '*') !== FALSE){
+		console("Add  : $key $index");
+		return $key*$index;
+	}
+	// Divide
+	if (strpos($var, '/') !== FALSE){
+		console("Add  : $key $index");
+		return $key / $index;
+	}
+	// Modulo
+	if (strpos($var, '%') !== FALSE){
+		console("Add  : $key $index");
+		return $key % $index;
 	}
 	// Default
 	if( $program[$key]["attr"][$index] && count($attrMods) < 1){
