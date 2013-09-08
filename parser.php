@@ -13,6 +13,7 @@ console("Start: $filename");
 $original = str_replace(" ", "", $original);
 $original = str_replace($string_compressed, $string_uncompressed, $original);
 $operations = explode("\n", $original);
+$time_start = microtime(true); 
 
 // =======================
 // Parser
@@ -21,7 +22,7 @@ $operations = explode("\n", $original);
 foreach ($operations as $key => $value) {
 
 	global $id;
-	console("Line # $key");
+	// console("Line # $key");
 
 	// Unset unnanmed functions
 	unset($program[""]);
@@ -32,7 +33,7 @@ foreach ($operations as $key => $value) {
 	// Store Id
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
-	
+
 	$program = update($value);
 	interpreter($id);
 
@@ -160,15 +161,20 @@ function renderValue($var){
 	global $program;
 	global $id;
 
+	$var = str_replace("$",	$id, $var);
+
 	if(!$var){
 		return;
 	}
+
+
 
 	$attrMods = preg_split('/[a-z0-9.$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$modifier = $attrMods[0];
 	$attrContent = preg_split('/[^a-z0-9.$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$key = dotValue($attrContent[0]);
 	$index = dotValue($attrContent[1]);
+	$var = dotValue($var);
 
 	// Random
 	if (strpos($var, '~') !== FALSE){
@@ -199,7 +205,6 @@ function renderValue($var){
 	if (strpos($var, '.') !== FALSE){
 		return $key;
 	}
-	console("Default");
 
 	// Return
 	return $var;
@@ -223,6 +228,7 @@ function dotValue($dotvalue){
 		}
 	}
 	else if( $program[$dotvalue]["attr"][0] ){
+		console("Get  : ".$dotvalue." 0");
 		return $program[$dotvalue]["attr"][0];
 	}
 	return $dotvalue;
@@ -236,7 +242,6 @@ function operate($operation){
 	global $id;
 
 	if(substr($operation, 0,1) == "\""){
-		echo "SEEN<br />";
 		echo renderString($operation);
 	}
 	else{
@@ -260,7 +265,7 @@ function renderString($operation){
 	}
 
 	$result = str_replace(
-	    array("@1","@2","@3"),
+	    array("@","@","@","@","@"),
 	    $replacements,
 	    $string
 	);
@@ -279,9 +284,12 @@ function console($message){
 }
 
 if($program["<system>"]["attr"]["logs"] == "on"){
-	print "<pre style='padding:10px; border:1px dashed #000; font-size:11px; line-height:10px; margin-bottom:20px'>";
-	print_r($logs);
-	print "</pre>";
+	print "<table style='font-size:11px; font-family:arial; border:1px; margin:20px 0px'>";
+	print "<tr><th>Line</th><th>Operaion</th><th>Time</th></tr>";
+	foreach ($logs as $key => $value) {
+		print "<tr><td><b>$key</b></td><td>$value</td><td>".number_format((float)(1000*(microtime(true) - $time_start)), 2, '.', '')."</td></tr>";
+	}
+	print "</table>";
 }
 
 if($program["<system>"]["attr"]["memory"] == "on"){
@@ -290,5 +298,6 @@ if($program["<system>"]["attr"]["memory"] == "on"){
 	echo htmlentities($test);
 	print "</pre>";
 }
+
 
 ?>

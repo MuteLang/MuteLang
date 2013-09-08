@@ -2,10 +2,36 @@
 <system>[logs:on,memory:on]
 
 # hello world
-{"hello world<br />"}
+{"hello world"}
+{"<br />"}
 
+# variable
+flyer[5]
 
+# inline declaration
+novel[25]{"novel pages: @",novel}
+{"<br />"}
 
+# named variable
+book[page:5]
 
+# using variable
+{"page value: @",book.page}
+{"<br />"}
 
-# test
+# conditional cases
+(book.page > 3){"book is greater than 3"}
+{"<br />"}
+
+# conditional variables
+flyer[pages:35](book.page > 3)
+(book.page > 3){"flyer pages: @",flyer.pages}
+{"<br />"}
+
+# self shorthand values
+leaflet[pages:4]{"Leaflet pages: @",$.pages}
+{"<br />"}
+
+# random values
+dictionary[pages:5~10]{"Dictionary pages: @",$.pages}
+{"<br />"}
