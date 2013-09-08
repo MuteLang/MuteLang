@@ -86,7 +86,6 @@ function update($value){
 }
 
 
-
 function update_attr($attr){
 
 	$temp = explode(",", $attr);
