@@ -1,0 +1,11 @@
+# start
+<system>[logs:on,memory:on]
+
+# hello world
+{"hello world<br />"}
+
+
+
+
+
+# test

@@ -1,14 +1,13 @@
 <?
 
 // Todo
-$filename = "mutescript.mu.php";
+$filename = "mute.main.txt";
 $original = file_get_contents($filename);
 if (preg_match_all('/"([^"]+)"/', $original, $m)) {
     $string_uncompressed = $m[1]; 
     $string_compressed = str_replace(" ", "", $string_uncompressed);
 }
 $logs = array();
-
 console("Start: $filename");
 
 $original = str_replace(" ", "", $original);
@@ -24,14 +23,16 @@ foreach ($operations as $key => $value) {
 	global $id;
 	console("Line # $key");
 
+	// Unset unnanmed functions
+	unset($program[""]);
+
+	// skip comments
+	if(substr($value, "#")){ continue; }
+
+	// Store Id
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
-
-	// comment
-	if(substr($value, "#")){
-		continue;
-	}
-
+	
 	$program = update($value);
 	interpreter($id);
 
@@ -47,7 +48,7 @@ function update($value){
 	global $program;
 	global $id;
 
-	$id = "----";
+	$id = "";
 
 	if (preg_match("/^[a-zA-Z0-9\\<\\>]$/", substr($value, 0,1) )) {
 	    $id = preg_split('/[^a-z0-9\\<\\>]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -235,6 +236,7 @@ function operate($operation){
 	global $id;
 
 	if(substr($operation, 0,1) == "\""){
+		echo "SEEN<br />";
 		echo renderString($operation);
 	}
 	else{
