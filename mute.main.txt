@@ -48,9 +48,14 @@ second[bar]
 topic[foo&bar]{"Topic: @",$}
 {"<br />"}
 
+# multiple conditions
+collection1(flyer.pages > 15)(5>1){"Solved<br />"}
+
 # multiple operations
-collection{"First Collection<br />"}{"Second Collection<br />"}
+collection2{"First Collection<br />"}{"Second Collection<br />"}
 
+# if 
 
+# while
 
-
+# foreach

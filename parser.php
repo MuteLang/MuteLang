@@ -62,7 +62,7 @@ function update($value){
 	$extn = $extn[1];
 	preg_match('#\[(.*?)\]#', $value, $attr);
 	$attr = $attr[1];
-	preg_match('#\((.*?)\)#', $value, $cond);
+	preg_match_all('#\((.*?)\)#', $value, $cond);
 	$cond = $cond[1];
 	preg_match_all('#\{(.*?)\}#', $value, $oper);
 	$oper = $oper[1];
@@ -121,10 +121,15 @@ function interpreter($id){
 
 	global $program;
 
-	if( resolve($program[$id]) && $program[$id]["oper"] ){
-		foreach ($program[$id]["oper"] as $key => $operationId) {
-			operate($operationId);
+	// Multiple conditions
+	foreach ($program[$id]["cond"] as $key => $condition) {
+		if(resolve($condition) == FALSE){
+			return;
 		}
+	}
+
+	foreach ($program[$id]["oper"] as $key => $operationId) {
+		operate($operationId);
 	}
 
 }
@@ -132,12 +137,12 @@ function interpreter($id){
 
 function resolve($run){
 
-	$run["cond_variables"] = preg_split('/[^a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-	$run["cond_operators"] = preg_split('/[a-z0-9.$]/i', $run["cond"], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$run1["cond_variables"] = preg_split('/[^a-z0-9.$]/i', $run, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$run1["cond_operators"] = preg_split('/[a-z0-9.$]/i', $run, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-	$first = renderValue($run["cond_variables"][0]);
-	$second = renderValue($run["cond_variables"][1]);
-	$operator = $run["cond_operators"][0];
+	$first = renderValue($run1["cond_variables"][0]);
+	$second = renderValue($run1["cond_variables"][1]);
+	$operator = $run1["cond_operators"][0];
 
 	switch($operator){
 		case ">": $resolving = $first > $second; break;
@@ -146,11 +151,11 @@ function resolve($run){
 	}
 
 	// If only 1 variable as condition
-	if( count($run["cond_variables"]) < 2 && $first > 0 ){
+	if( count($run1["cond_variables"]) < 2 && $first > 0 ){
 		$resolving = 1;
 	}
 
-	if( $resolving || !$run["cond"] ){
+	if( $resolving || !$run ){
 		return true;
 	}
 	else{
