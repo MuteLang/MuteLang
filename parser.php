@@ -30,7 +30,7 @@ foreach ($operations as $key => $value) {
 	unset($program[""]);
 
 	// skip comments
-	if(substr($value, "#")){ continue; }
+	if(substr($value, 0,1) == "#"){ continue; }
 
 	// Store Id
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -92,11 +92,17 @@ function update_attr($attr){
 	$temp = explode(",", $attr);
 
 	foreach ($temp as $key => $value) {
+
 		// Hard Setter
 		if (strpos($value, ':') !== FALSE){
 			$indexAndKey = explode(":", $value);
 			console("Set  : ".$indexAndKey[0]." ".$indexAndKey[1]);
-			$updated[$indexAndKey[0]] = $indexAndKey[1];
+			$updated[$indexAndKey[0]] = renderValue($indexAndKey[1]);
+		}
+		// If an array is returned
+		elseif( is_array(renderValue($value)) ){
+			console("Attr : Array($key)");
+			$updated = renderValue($value);
 		}
 		// Render
 		else{
@@ -128,6 +134,7 @@ function interpreter($id){
 		}
 	}
 
+	// multiple operations
 	foreach ($program[$id]["oper"] as $key => $operationId) {
 		operate($operationId);
 	}
@@ -184,6 +191,10 @@ function renderValue($var){
 	$key = dotValue($attrContent[0]);
 	$index = dotValue($attrContent[1]);
 	$var = dotValue($var);
+
+	if(count($var)>1){
+		return $var;
+	}
 
 	// Primary
 
@@ -259,7 +270,12 @@ function dotValue($dotvalue){
 		}
 	}
 	else if( $program[$dotvalue]["attr"][0] ){
-		return $program[$dotvalue]["attr"][0];
+		if( count($program[$dotvalue]["attr"]) > 1 ){
+			return $program[$dotvalue]["attr"];
+		}
+		else{
+			return $program[$dotvalue]["attr"][0];
+		}
 	}
 	return $dotvalue;
 
