@@ -60,4 +60,8 @@ if[5]($>2){"true<br />"}
 # while
 a[1]($<10){"@ is smaller<br />",$}{a[$+1]}
 
-# foreach
+# range, substring
+range[-4]
+string[longstring|-4]
+{"this is a short@",string}
+{"<br />"}

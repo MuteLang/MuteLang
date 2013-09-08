@@ -185,21 +185,26 @@ function renderValue($var){
 	$index = dotValue($attrContent[1]);
 	$var = dotValue($var);
 
+	// Primary
+
 	// Random
 	if (strpos($var, '~') !== FALSE){
 		console("Rand : $key $index");
 		return rand($key,$index);
 	}
-	// Length
-	if (strpos($var, ';') !== FALSE){
-		console("Length : ".strlen($program[$key]["attr"][0]));
-		return strlen($key);
+	// Substring
+	if (strpos($var, '|') !== FALSE){
+		console("Subs : $key $index");
+		return substr($key, $index);
 	}
 	// Merge
 	if (strpos($var, '&') !== FALSE){
 		console("Merge: $key $index");
 		return $key.$index;
 	}
+
+	// Secondary
+	
 	// Add
 	if (strpos($var, '+') !== FALSE){
 		console("Add  : $key $index");
