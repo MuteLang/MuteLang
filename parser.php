@@ -8,6 +8,7 @@ if (preg_match_all('/"([^"]+)"/', $original, $m)) {
     $string_compressed = str_replace(" ", "", $string_uncompressed);
 }
 $logs = array();
+$lineNum = 0;
 console("Start: $filename");
 
 $original = str_replace(" ", "", $original);
@@ -22,7 +23,8 @@ $time_start = microtime(true);
 foreach ($operations as $key => $value) {
 
 	global $id;
-	// console("Line # $key");
+	global $lineNum;
+	$lineNum++;
 
 	// Unset unnanmed functions
 	unset($program[""]);
@@ -167,7 +169,7 @@ function renderValue($var){
 		return;
 	}
 
-
+	console("Render  : ".htmlentities($var));
 
 	$attrMods = preg_split('/[a-z0-9.$]/i', $var, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$modifier = $attrMods[0];
@@ -217,18 +219,14 @@ function dotValue($dotvalue){
 	global $program;
 
 	if (strpos($dotvalue, '.') !== FALSE){
-
 		$elements = explode(".", $dotvalue);
 		$key = $elements[0];
 		$index = $elements[1];
-
-		console("Get  : ".$key." ".$index);
 		if( $program[$key]["attr"][$index] ){
 			return $program[$key]["attr"][$index];
 		}
 	}
 	else if( $program[$dotvalue]["attr"][0] ){
-		console("Get  : ".$dotvalue." 0");
 		return $program[$dotvalue]["attr"][0];
 	}
 	return $dotvalue;
@@ -278,16 +276,21 @@ function renderString($operation){
 function console($message){
 
 	global $logs;
+	global $lineNum;
+	global $time_start;
 
-	$logs[count($logs)] = $message;
+	$logNum = count($logs);
+	$logs[$logNum]["message"] = $message;
+	$logs[$logNum]["time"] = number_format((float)(1000*(microtime(true) - $time_start)), 2, '.', '');
+	$logs[$logNum]["line"] = $lineNum;
 
 }
 
 if($program["<system>"]["attr"]["logs"] == "on"){
-	print "<table style='font-size:11px; font-family:arial; border:1px; margin:20px 0px'>";
-	print "<tr><th>Line</th><th>Operaion</th><th>Time</th></tr>";
+	print "<table style='font-size:11px; font-family:courier; border:1px; margin:20px 0px'>";
+	print "<tr><th>#</th><th>Line</th><th>Operaion</th><th>Time</th></tr>";
 	foreach ($logs as $key => $value) {
-		print "<tr><td><b>$key</b></td><td>$value</td><td>".number_format((float)(1000*(microtime(true) - $time_start)), 2, '.', '')."</td></tr>";
+		print "<tr><td>".$key."</td><td><b>".$value['line']."</b></td><td>".$value['message']."</td><td>".$value['time']."</td></tr>";
 	}
 	print "</table>";
 }
