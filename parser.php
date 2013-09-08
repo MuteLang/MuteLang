@@ -27,6 +27,11 @@ foreach ($operations as $key => $value) {
 	$id = preg_split('/[^a-z0-9]/i', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$id = $id[0];
 
+	// comment
+	if(substr($value, "#")){
+		continue;
+	}
+
 	$program = update($value);
 	interpreter($id);
 
