@@ -1,6 +1,5 @@
 <?
 
-// Todo
 $filename = "mute.main.txt";
 $original = file_get_contents($filename);
 if (preg_match_all('/"([^"]+)"/', $original, $m)) {
@@ -15,6 +14,15 @@ $original = str_replace(" ", "", $original);
 $original = str_replace($string_compressed, $string_uncompressed, $original);
 $operations = explode("\n", $original);
 $time_start = microtime(true); 
+
+
+// =======================
+// Inlets
+// =======================
+
+$program["<get>"]["attr"] = $_GET;
+$program["<post>"]["attr"] = $_POST;
+
 
 // =======================
 // Parser
@@ -165,7 +173,7 @@ function resolve($run){
 		$resolving = 1;
 	}
 
-	if( $resolving || !$run ){
+	if( $resolving || !$run || !$second ){
 		return true;
 	}
 	else{

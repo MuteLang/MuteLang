@@ -72,4 +72,11 @@ array2[4,5,9,3]
 combined[first:array1,second:array1]
 returnval[combined.first]
 {"@",returnval.0}
+{"<br />"}
+
+# inlet
+postarray[<post>.key]
+somegetvalue[<get>.key]
+(getarray){"@<br />",somegetvalue}
+
 
