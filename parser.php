@@ -299,13 +299,11 @@ function operate($operation){
 	global $program;
 	global $id;
 
-	// Todo
-	// if(substr(dotValue($operation), 0,1) == "\""){
-	// 	echo "- - - - {".dotValue($operation)."}<br />";
-	// }
-
 	if(substr($operation, 0,1) == "\""){
 		echo renderString($operation);
+	}
+	else if(substr(dotValue($operation), 0,1) == "\""){
+		echo renderString(dotValue($operation));
 	}
 	else{
 		$program = update($operation);

@@ -80,6 +80,7 @@ somegetvalue[<get>.key]
 (getarray){"@<br />",somegetvalue}
 
 # string explicit
-somestr["test"]
-{somestr}
+somestr["range",test]
+print{somestr.0}
+notprint{somestr.1}
 
