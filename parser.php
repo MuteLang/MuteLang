@@ -127,17 +127,19 @@ function interpreter($id){
 	global $program;
 
 	// Multiple conditions
-	if(!$program[$id]["cond"]){ return; }
-	foreach ($program[$id]["cond"] as $key => $condition) {
-		if(resolve($condition) == FALSE){
-			return;
+	if($program[$id]["cond"]){
+		foreach ($program[$id]["cond"] as $key => $condition) {
+			if(resolve($condition) == FALSE){
+				return;
+			}
 		}
 	}
 
 	// multiple operations
-	if(!$program[$id]["oper"]){ return; }
-	foreach ($program[$id]["oper"] as $key => $operationId) {
-		operate($operationId);
+	if($program[$id]["oper"]){ 
+		foreach ($program[$id]["oper"] as $key => $operationId) {
+			operate($operationId);
+		}
 	}
 
 }
