@@ -1,0 +1,8 @@
+# start
+<system>[logs:off,memory:off]
+
+# demo
+a($>10){"working"}
+a[4]
+a[11]
+a[20]

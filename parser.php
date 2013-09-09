@@ -1,6 +1,6 @@
 <?
 
-$filename = "mute.main.txt";
+$filename = "mute.demo.txt";
 $original = file_get_contents($filename);
 if (preg_match_all('/"([^"]+)"/', $original, $m)) {
     $string_uncompressed = $m[1]; 
