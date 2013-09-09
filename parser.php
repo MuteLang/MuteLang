@@ -127,6 +127,7 @@ function interpreter($id){
 	global $program;
 
 	// Multiple conditions
+	if(!$program[$id]["cond"]){ return; }
 	foreach ($program[$id]["cond"] as $key => $condition) {
 		if(resolve($condition) == FALSE){
 			return;
@@ -134,6 +135,7 @@ function interpreter($id){
 	}
 
 	// multiple operations
+	if(!$program[$id]["oper"]){ return; }
 	foreach ($program[$id]["oper"] as $key => $operationId) {
 		operate($operationId);
 	}
@@ -233,6 +235,7 @@ function renderValue($var){
 	// Divide
 	if (strpos($var, '/') !== FALSE){
 		console("Add  : $key $index");
+		if($index == 0){$index = 1;}
 		return $key / $index;
 	}
 	// Modulo
