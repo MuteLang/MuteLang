@@ -79,4 +79,7 @@ postarray[<post>.key]
 somegetvalue[<get>.key]
 (getarray){"@<br />",somegetvalue}
 
+# string explicit
+somestr["test"]
+{somestr}
 
