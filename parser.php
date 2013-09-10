@@ -155,6 +155,9 @@ function interpreter($id){
 
 function resolve($run){
 
+	global $program;
+	global $id;
+
 	$run1["cond_variables"] = preg_split('/[^a-z0-9.$]/i', $run, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$run1["cond_operators"] = preg_split('/[a-z0-9.$]/i', $run, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
@@ -171,6 +174,10 @@ function resolve($run){
 	// If only 1 variable as condition
 	if( count($run1["cond_variables"]) < 2 && $first > 0 ){
 		$resolving = 1;
+	}
+	// Check if variable exists
+	if(!$operator && !$second && $first == $id){
+		return false;
 	}
 
 	if( $resolving || !$run || !$second ){

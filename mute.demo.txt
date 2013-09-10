@@ -1,3 +1,7 @@
-<system>[logs:on,memory:on]  
-br[0](br > 10){"break<br />"} 
-br[11]
+# start 
+<system>[logs:on,memory:on]
+
+# program
+val1[25]
+fn($){"echo: @",$}
+fn[val1]
