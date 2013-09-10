@@ -2,6 +2,6 @@
 <system>[logs:on,memory:on]
 
 # program
-val1[25]
-fn($){"echo: @",$}
-fn[val1]
+test[first:10,second:15]
+object[method:test.first]{"hey"}
+(object.method>5){"cool"}

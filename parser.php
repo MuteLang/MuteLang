@@ -15,14 +15,12 @@ $original = str_replace($string_compressed, $string_uncompressed, $original);
 $operations = explode("\n", $original);
 $time_start = microtime(true); 
 
-
 // =======================
 // Inlets
 // =======================
 
 $program["<get>"]["attr"] = $_GET;
 $program["<post>"]["attr"] = $_POST;
-
 
 // =======================
 // Parser
@@ -122,8 +120,6 @@ function update_attr($attr){
 	return $updated;
 
 }
-
-
 
 // =======================
 // Interpreter
