@@ -163,9 +163,9 @@ function resolve($run){
 	$operator = $run1["cond_operators"][0];
 
 	switch($operator){
-		case ">": $resolving = $first > $second; break;
-		case "<": $resolving = $first < $second; break;
-		case "=": $resolving = $first ==$second; break;
+		case ">": $resolving = intval($first) > intval($second); break;
+		case "<": $resolving = intval($first) < intval($second); break;
+		case "=": $resolving = $first == $second; break;
 	}
 
 	// If only 1 variable as condition

@@ -1,8 +1,3 @@
-# start
-<system>[logs:off,memory:off]
-
-# demo
-a($>10){"working"}
-a[4]
-a[11]
-a[20]
+<system>[logs:on,memory:on]  
+br[0](br > 10){"break<br />"} 
+br[11]
