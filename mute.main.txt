@@ -84,3 +84,11 @@ somestr["range",test]
 print{somestr.0}
 notprint{somestr.1}
 
+# Merge Array
+array1[1,2]
+array2[3,4]
+merger[array1&array2]
+
+# function declare
+($){"echo: @",$}
+

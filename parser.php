@@ -225,7 +225,7 @@ function renderValue($var){
 	// Merge
 	if (strpos($var, '&') !== FALSE){
 		console("Merge: $key $index");
-		return $key.$index;
+		return array_merge((array)$key, (array)$index);
 	}
 
 	// Secondary

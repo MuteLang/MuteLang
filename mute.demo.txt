@@ -2,6 +2,6 @@
 <system>[logs:on,memory:on]
 
 # program
-test[first:10,second:15]
-object[method:test.first]{"hey"}
-(object.method>5){"cool"}
+array1[1,2]
+array2[3,4]
+merger[array1&array2]
