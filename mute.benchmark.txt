@@ -3,6 +3,7 @@
 
 {"<pre>"}
 
+# Start
 {"Defaults[unset]: 1 - 1"}{"<br />"}
 
 # Variable
@@ -10,11 +11,11 @@
 varnamed[2]{"Variable[named]: @ - 2", varnamed}{"<br>"}
 varnamed[2]{"Variable[nmdot]: @ - 2", varnamed.0}{"<br>"}
 varnamed[3]{"Variable[nmslf]: @ - 3", $}{"<br>"}
-varnamed["hello"]{"Variable[strin]: hello - @", varnamed}{" <span style='color:red'>Failing!</span>"}{"<br>"}
 varnamed[hello]{"Variable[strin]: hello - @", varnamed}{"<br>"}
 vardeclared[4]
 {"Variable[declr]: @ - 4", vardeclared}{"<br>"}
-[5]{"Variable[unslf]: @ - 5", $}{" <span style='color:red'>Failing!</span>"}{"<br>"}
+[5]{"Variable[unslf]: @ - 5", $}{"<br>"}
+varnamed["hello"]{"Variable[strin]: hello - @", varnamed}{" <span style='color:red'>Failing!</span>"}{"<br>"}
 
 # Conditions
 {"<br>"}{"Conditions"}{"<br>"}
@@ -26,7 +27,7 @@ cond[4,2,3]
 {"Conditio[varia]:"}{" <span style='color:red'>Failing!</span>"}
 (cond.1>cond.2){"TRUE"}
 {"<br>"}
-{"Conditio[uself]:"}{" <span style='color:red'>Failing!</span>"}
+{"Conditio[uself]: "}
 [5]($>2){"TRUE"}
 {"<br>"}
 test[5]($>2){"Conditio[vself]: TRUE"}{"<br>"}
@@ -50,6 +51,6 @@ returnval[combined.first]
 
 #random
 a[5~6]{"randomin[btwen]: @ - [5~6]",$}{"<br>"}
-[5~10]{"randomin[btund]: @",$}{" <span style='color:red'>Failing!</span>"}{"<br>"}
+[5~10]{"randomin[btund]: @",$}{"<br>"}
 
 {"</pre>"}

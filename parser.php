@@ -191,7 +191,12 @@ function renderValue($var){
 	global $program;
 	global $id;
 
+
 	$var = str_replace("$",	$id, $var);
+
+	if($id=="" && !$var){
+		return $program[""]["attr"][0];
+	}
 
 	if(!$var){
 		return;
@@ -292,6 +297,7 @@ function dotValue($dotvalue){
 			return $program[$dotvalue]["attr"][0];
 		}
 	}
+
 	return $dotvalue;
 
 }
