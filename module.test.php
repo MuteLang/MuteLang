@@ -1,0 +1,3 @@
+<?
+	echo "$attr - $cond - $oper";
+?>
