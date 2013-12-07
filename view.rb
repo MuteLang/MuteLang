@@ -9,15 +9,30 @@ def muteInitiate load
   @muteMemory[load]
 end
 
-def muteParseScript mute_script
+def muteParseScript inputString
 
   @muteReturn = ""
   lines = Hash.new
-  lines = mute_script.lines
+  lines = inputString.lines
   lines.each do |line|
     muteParseLines(line)
   end
   return @muteReturn
+end
+
+def muteParseFromBlock inputString
+
+  if inputString.include? "{mute}"
+    testScript = inputString.scan(/(?:\{mute\})([\w\W]*?)(?=\{\/mute\})/)
+    testScript.each do |k,v|
+      inputString = inputString.sub(k,muteParseScript(k).to_s)
+    end
+    inputString = inputString.gsub("{mute}","").gsub("{/mute}","")
+    return inputString
+  else
+    return inputString
+  end
+
 end
 
 # ==================
@@ -260,9 +275,13 @@ def muteOperSub val1, val2
   end
 end
 
+# ==================
+# @ Testing
+# ==================
+
 # Test String
 
-input_string = '
+test_string = '
 Begin
 {mute}
 a[5]{"@",a}
@@ -278,16 +297,5 @@ Some stuff'
 prefill = {"title" => "indexer", "tester" => "default"}
 muteInitiate(prefill)
 
-# Customize delimiter
-testScript = input_string.scan(/(?:\{mute\})([\w\W]*?)(?=\{\/mute\})/)
-
-testScript.each do |k,v|
-  input_string = input_string.sub(k,muteParseScript(k).to_s)
-
-end
-input_string = input_string.gsub("{mute}","").gsub("{/mute}","")
-
-puts input_string
-
-
+puts muteParseFromBlock(test_string)
 
