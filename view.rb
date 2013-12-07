@@ -3,18 +3,21 @@
 # ==================
 
 def muteInitiate load
-  @memory = Hash.new  
-  @memory['mute'] = Hash.new
-  @memory['mute']['data'] = load
-  @memory[load]
+  @muteMemory = Hash.new  
+  @muteMemory['mute'] = Hash.new
+  @muteMemory['mute']['data'] = load
+  @muteMemory[load]
 end
 
 def muteParseScript mute_script
+
+  @muteReturn = ""
   lines = Hash.new
   lines = mute_script.lines
   lines.each do |line|
     muteParseLines(line)
   end
+  return @muteReturn
 end
 
 # ==================
@@ -27,28 +30,28 @@ def muteParseLines mute_line
   memoryname = mute_line.scan(/[a-z0-9#]+/i)[0]
 
   # Create memory
-  if !@memory[memoryname]
-    @memory[memoryname] = Hash.new
-    @memory[memoryname]['cond'] = Hash.new
-    @memory[memoryname]['data'] = Hash.new
-    @memory[memoryname]['oper'] = Hash.new
+  if !@muteMemory[memoryname]
+    @muteMemory[memoryname] = Hash.new
+    @muteMemory[memoryname]['cond'] = Hash.new
+    @muteMemory[memoryname]['data'] = Hash.new
+    @muteMemory[memoryname]['oper'] = Hash.new
   end
 
   # cond
   cond = mute_line.scan(/\((.*?)\)/)
-  if cond[0] then @memory[memoryname]['cond'] = cond end
+  if cond[0] then @muteMemory[memoryname]['cond'] = cond end
   
   # data
   data = mute_line.scan(/\[(.*?)\]/)
-  if data[0] then @memory[memoryname]['data'] = muteParsedata(data) end
+  if data[0] then @muteMemory[memoryname]['data'] = muteParsedata(data) end
 
   # oper
   oper = mute_line.scan(/\{(.*?)\}/)
-  if oper[0] then @memory[memoryname]['oper'] = oper end
+  if oper[0] then @muteMemory[memoryname]['oper'] = oper end
 
   # Run!
-  if muteParsecond(@memory[memoryname]['cond']) > 0 then
-    muteOperate(@memory[memoryname]['oper'])
+  if muteParsecond(@muteMemory[memoryname]['cond']) > 0 then
+    muteOperate(@muteMemory[memoryname]['oper'])
   end
 
 end
@@ -174,21 +177,13 @@ def muteOperatePrint opertring
 
   # Simple string
   if opertringSplitted.length == 1
-    puts opertringFirst
+    @muteReturn += opertringFirst
   elsif opertringSplitted[0].include? "@"
-    puts opertringFirst.sub('@',muteMemoryAccessor(opertringSplitted[1]))
+    @muteReturn += opertringFirst.sub('@',muteMemoryAccessor(opertringSplitted[1]))
   else
-    puts opertringSplitted.to_s
+    @muteReturn += opertringSplitted.to_s
   end
 
-end
-
-# ==================
-# @ Consolelog
-# ==================
-
-def muteMemoryPrint
-  p @memory
 end
 
 # ==================
@@ -203,19 +198,19 @@ def muteMemoryAccessor memoryAccessor
   end
 
   # If variable name is used
-  if @memory[memoryAccessor]
+  if @muteMemory[memoryAccessor]
     # 1 memoryAccessorIndex:int
-    if memoryAccessorIndex && @memory[memoryAccessor]['data'][memoryAccessorIndex.to_i]
-      return @memory[memoryAccessor]['data'][memoryAccessorIndex.to_i].to_s
+    if memoryAccessorIndex && @muteMemory[memoryAccessor]['data'][memoryAccessorIndex.to_i]
+      return @muteMemory[memoryAccessor]['data'][memoryAccessorIndex.to_i].to_s
     # 1 memoryAccessorIndex:string
-    elsif memoryAccessorIndex && @memory[memoryAccessor]['data'][memoryAccessorIndex]
-      return @memory[memoryAccessor]['data'][memoryAccessorIndex].to_s
+    elsif memoryAccessorIndex && @muteMemory[memoryAccessor]['data'][memoryAccessorIndex]
+      return @muteMemory[memoryAccessor]['data'][memoryAccessorIndex].to_s
     # 0 memoryAccessorIndex
-    elsif @memory[memoryAccessor]['data'][0] && @memory[memoryAccessor]['data'].length == 1
-      return @memory[memoryAccessor]['data'][0].to_s
+    elsif @muteMemory[memoryAccessor]['data'][0] && @muteMemory[memoryAccessor]['data'].length == 1
+      return @muteMemory[memoryAccessor]['data'][0].to_s
     # 0 memoryAccessorCount
-    elsif @memory[memoryAccessor]['data'][0] && @memory[memoryAccessor]['data'].length > 1
-      return @memory[memoryAccessor]['data'].length.to_s
+    elsif @muteMemory[memoryAccessor]['data'][0] && @muteMemory[memoryAccessor]['data'].length > 1
+      return @muteMemory[memoryAccessor]['data'].length.to_s
     end
   end
   return memoryAccessor
@@ -265,20 +260,21 @@ def muteOperSub val1, val2
   end
 end
 
-input_string = '
-<p>Some stuff</p>
-{mute}
-a[9]
-a{"@",a}
-{/mute}
-testScript
-{mute}
-a[9]
-a{"@",a}
-{/mute}
-<p>Some stuff</p>'
+# Test String
 
-# Prestore data in @memory
+input_string = '
+Begin
+{mute}
+a[5]{"@",a}
+a[9]{"test"}
+{/mute}
+Middle
+{mute}
+a{"@",a}
+{/mute}
+Some stuff'
+
+# Prestore data in @muteMemory
 prefill = {"title" => "indexer", "tester" => "default"}
 muteInitiate(prefill)
 
@@ -286,5 +282,12 @@ muteInitiate(prefill)
 testScript = input_string.scan(/(?:\{mute\})([\w\W]*?)(?=\{\/mute\})/)
 
 testScript.each do |k,v|
-  muteParseScript(k)
+  input_string = input_string.sub(k,muteParseScript(k).to_s)
+
 end
+input_string = input_string.gsub("{mute}","").gsub("{/mute}","")
+
+puts input_string
+
+
+
