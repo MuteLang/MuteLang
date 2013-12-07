@@ -1,4 +1,0 @@
-mute
-====
-
-Wordless programming language
