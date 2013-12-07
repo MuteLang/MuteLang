@@ -265,25 +265,26 @@ def muteOperSub val1, val2
   end
 end
 
-prefill = {"title" => "indexer", "tester" => "default"}
-
-muteInitiate(prefill)
-
 input_string = '
 <p>Some stuff</p>
-:::
-a[5]
-:::
+{mute}
+a[9]
+a{"@",a}
+{/mute}
+testScript
+{mute}
+a[9]
+a{"@",a}
+{/mute}
 <p>Some stuff</p>'
 
-muteStart = ":::"
-muteEnd   = ":::"
-testScript = input_string[/#{muteStart}(.*?)#{muteEnd}/m, 1]
+# Prestore data in @memory
+prefill = {"title" => "indexer", "tester" => "default"}
+muteInitiate(prefill)
 
-muteParseScript(testScript)
+# Customize delimiter
+testScript = input_string.scan(/(?:\{mute\})([\w\W]*?)(?=\{\/mute\})/)
 
-testString2 = '
-test{"> @ ",a}
-test2{"+ @",mute.title}
-'
-muteParseScript(testString2)
+testScript.each do |k,v|
+  muteParseScript(k)
+end
