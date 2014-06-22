@@ -17,11 +17,13 @@ class Mute
 					if @memory[k][v][e.to_i] then return @memory[k][v][e.to_i] end
 					if @memory[k][v][e] then return @memory[k][v][e.to_i] end
 				end
-				if @memory[k][v.to_i] then return @memory[k][v.to_i] end
 				if @memory[k][v] then return @memory[k][v] end
+			elsif @memory[k].class == Array
+				if @memory[k][v.to_i] then return @memory[k][v.to_i] end
 			end
 
 		end
+		
 		return index
 
 	end

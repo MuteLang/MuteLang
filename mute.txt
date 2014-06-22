@@ -1,4 +1,2 @@
-foo[5]{
-	bar[5]
-	foo[bar*2]
-}
+foo[1,2]
+bar[foo.1]

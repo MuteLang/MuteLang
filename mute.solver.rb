@@ -13,8 +13,15 @@ class Mute
 	def lineSolver name,condition
 
 		operator = condition.gsub(/[0-9a-z.]/i, '').lstrip.rstrip
-		val1 = memlink(condition.split(operator)[0])
-		val2 = memlink(condition.split(operator)[1])
+
+		val1raw = condition.split(operator)[0]
+		val2raw = condition.split(operator)[1]
+
+		if val1raw.to_s == "" && val2raw.to_s != "" then val1raw = name end
+		if val1raw.to_s != "" && val2raw.to_s == "" then val1raw = name end
+
+		val1 = memlink(val1raw)
+		val2 = memlink(val2raw)
 
 		# Simple mode
 		if !operator
