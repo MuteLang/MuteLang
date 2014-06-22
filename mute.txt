@@ -1,4 +1,2 @@
-storage.data1[5]
-foo[storage.data1+5]
-bar[10]
-bar(foo)[20]
+foo[1,2,3,4]
+bar[foo.3+foo.2]

@@ -17,7 +17,7 @@ class Mute
 		if memlink(name).to_i == condition.to_i
 			return 1
 		elsif memlink(name).to_i == memlink(condition).to_i 
-			return 1				
+			return 1			
 		end
 
 		return 0

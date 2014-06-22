@@ -2,11 +2,25 @@ class Mute
 
 	def memlink index
 
-
-		if index.include? "."
-			return @memory[index.split(".")[0]][index.split(".")[1]]
-		elsif @memory[index]
+		if @memory[index]
 			return @memory[index]
+		end
+
+		if index.to_s.include? "."
+
+			k = index.split(".")[0]
+			v = index.split(".")[1]
+
+			if @memory[k].class == Hash && @memory[k][v]
+				return @memory[k][v]
+			end
+
+			if @memory[k][v.to_i]
+				return @memory[k][v.to_i]
+			end
+
+			
+
 		end
 		return index
 
