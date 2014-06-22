@@ -18,10 +18,10 @@ class Mute
 	def lineParser mute_line
 
 		# memoryname
-		name = mute_line.scan(/[a-z0-9.#]+/i)[0]
-		cond = mute_line.scan(/\((.*?)\)/)
-		sets = mute_line.scan(/\[(.*?)\]/)
-		oper = mute_line.scan(/\{(.*?)\}/)
+		name = mute_line.to_s.scan(/[a-z0-9.#]+/i)[0]
+		oper = mute_line.to_s.scan(/\{(.*?)\}/)
+		cond = mute_line.to_s.scan(/\((.*?)\)/)
+		sets = mute_line.gsub(/\{[^()]*\}/,"").to_s.scan(/\[(.*?)\]/)
 
 		# 1. solver
 		if cond.length > 0 && solver(name,cond) == 0 then return "" end
@@ -30,6 +30,12 @@ class Mute
 		if sets.length > 0
 			memSave(name,setter(name,sets))
 		end
+
+		# 3. render
+		if oper.length > 0
+			lineParser(oper[0][0])
+		end
+
 
 		return ""
 
@@ -40,7 +46,7 @@ class Mute
 		html = ""
 		lineCount = 1;
 		@textData.split("\n").each do |k,v|
-			html += "line"+lineCount.to_s+" : "+k+"<br />"
+			html += "<span style='color:#555'>"+lineCount.to_s+"</span> "+k+"<br />"
 			lineCount += 1
 		end
 
