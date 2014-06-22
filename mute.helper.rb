@@ -10,16 +10,16 @@ class Mute
 
 			k = index.split(".")[0]
 			v = index.split(".")[1]
+			e = index.split(".")[2]
 
-			if @memory[k].class == Hash && @memory[k][v]
-				return @memory[k][v]
+			if @memory[k].class == Hash
+				if @memory[k][v].class == Hash
+					if @memory[k][v][e.to_i] then return @memory[k][v][e.to_i] end
+					if @memory[k][v][e] then return @memory[k][v][e.to_i] end
+				end
+				if @memory[k][v.to_i] then return @memory[k][v.to_i] end
+				if @memory[k][v] then return @memory[k][v] end
 			end
-
-			if @memory[k][v.to_i]
-				return @memory[k][v.to_i]
-			end
-
-			
 
 		end
 		return index
