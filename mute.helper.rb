@@ -12,6 +12,8 @@ class Mute
 			v = index.split(".")[1]
 			e = index.split(".")[2]
 
+			v = memlink(v)
+
 			if @memory[k].class == Hash
 				if @memory[k][v].class == Hash
 					if @memory[k][v][e.to_i] then return @memory[k][v][e.to_i] end
@@ -23,7 +25,7 @@ class Mute
 			end
 
 		end
-		
+
 		return index
 
 	end

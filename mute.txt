@@ -1,2 +1,5 @@
-foo[1,2]
-bar[foo.1]
+
+b.a[18]
+a[2]
+b[1,2,3,4]
+console[b.a]

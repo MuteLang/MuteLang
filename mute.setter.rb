@@ -15,23 +15,18 @@ class Mute
 		if operator != ""
 			return setterOperator(name,set,operator)
 		else
-			return setterSimple(set)
+			return memlink(set)
 		end
 
 	end
 
-	def setterSimple set
-		return memlink(set)
-	end
-
-	
 	def setterOperator name,set,operator
 
 		val1 = memlink( set.split(operator)[0] )
 		val2 = memlink( set.split(operator)[1] )
 
-		if val1.to_i != 0 then val1 = val1.to_i end
-		if val2.to_i != 0 then val2 = val2.to_i end
+		# if val1.to_i != 0 then val1 = val1.to_i end
+		# if val2.to_i != 0 then val2 = val2.to_i end
 
 		if set.include? "," then
 			fixedReturn = Array.new
