@@ -1,8 +1,4 @@
-a[5]
-a(5)[10]
-a(10){here}
-b[1,2,a,hello]
-c[10]
-d[a]
-e[a+c]
-e(20)[40]
+storage.data1[5]
+foo[storage.data1+5]
+bar[10]
+bar(foo)[20]

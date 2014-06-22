@@ -1,7 +1,7 @@
 class Mute
 
 	def solver name,conditions
-		
+
 		conditions.each do |condition,v|
 			if lineSolver(name,condition) == 0 then return 0 end
 		end
@@ -14,27 +14,23 @@ class Mute
 
 		operator = condition.gsub(/[0-9a-z.]/i, '')
 
-		if operator != ""
-			return operationSolver(name,condition) 
+		if memlink(name).to_i == condition.to_i
+			return 1
+		elsif memlink(name).to_i == memlink(condition).to_i 
+			return 1				
 		end
 
-		if condition.to_i != 0 && condition != 0 
-			return integerSolver(name,condition)
-		end
+		return 0
 
 	end
 
 	def operationSolver name,condition
-
+		return "wip"
 	end
 
 	def integerSolver name,condition
 
-		if @memory[name].to_i == condition.to_i
-			return 1
-		else
-			return 0
-		end
+		
 
 	end
 

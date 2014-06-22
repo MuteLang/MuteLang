@@ -13,7 +13,7 @@ class Mute
 		operator = set.gsub(/[0-9a-z.]/i, '')
 
 		if operator != ""
-			return setterOperator(set)
+			return setterOperator(set,operator)
 		else
 			return setterSimple(set)
 		end
@@ -25,26 +25,29 @@ class Mute
 	end
 
 	
-	def setterOperator set
-		
-		if set.include? "," then return set.split(",") end
-		if set.include? "+" then return operatorAdd(set) end
+	def setterOperator set,operator
+
+		val1 = memlink( set.split(operator)[0] )
+		val2 = memlink( set.split(operator)[1] )
+
+		if val1.to_i != 0 then val1 = val1.to_i end
+		if val2.to_i != 0 then val2 = val2.to_i end
+
+		if set.include? "," then
+			fixedReturn = Array.new
+			set.split(",").each do |k,v|
+				fixedReturn.push(setterSet(k))
+			end
+			return fixedReturn
+
+		end
+
+		if operator == "+" then return val1 + val2 end
+		if operator == "-" then return val1 - val2 end
+		if operator == "/" then return val1 / val2 end
+		if operator == "*" then return val1 * val2 end
 
 		return "multi"
-	end
-
-	def operatorAdd set
-
-		accessor1 = set.split("+")[0]
-		accessor2 = set.split("+")[1]
-
-		accessor1 = memlink(accessor1)
-		accessor2 = memlink(accessor2)
-
-		if accessor1.to_i != 0 then accessor1 = accessor1.to_i end
-		if accessor2.to_i != 0 then accessor2 = accessor2.to_i end
-
-		return accessor1 + accessor2
 	end
 
 end
