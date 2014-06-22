@@ -1,3 +1,2 @@
-foo[2,3,4,5]
-foo.test.hello[5]
-som[foo.test.hello]
+bar[5]
+foo(bar<10)[20]

@@ -1,6 +1,6 @@
 class Mute
 
-	def setter sets
+	def setter name,sets
 
 		sets.each do |k,v|
 			return setterSet(k)
@@ -39,7 +39,6 @@ class Mute
 				fixedReturn.push(setterSet(k))
 			end
 			return fixedReturn
-
 		end
 
 		if operator == "+" then return val1 + val2 end

@@ -28,7 +28,7 @@ class Mute
 
 		# 2. setter		
 		if sets.length > 0
-			memSave(name,setter(sets))
+			memSave(name,setter(name,sets))
 		end
 
 		return ""
