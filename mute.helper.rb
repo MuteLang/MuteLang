@@ -33,10 +33,19 @@ class Mute
 	def memSave name,data
 
 		if name.include? "."
-			if @memory[name.split(".")[0]].class != Hash
-				@memory[name.split(".")[0]] = {}
+
+			k = name.split(".")[0]
+			v = name.split(".")[1]
+
+			if @memory[k].class != Hash && @memory[k].class != Array
+				@memory[k] = {}
 			end
-			@memory[name.split(".")[0]][name.split(".")[1]] = data
+			if v.to_i > 0
+				@memory[k][v.to_i] = data
+			else
+				@memory[k][v] = data
+			end
+
 		else
 			@memory[name] = data
 		end
